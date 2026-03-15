@@ -20,12 +20,18 @@ export function AuthProvider({ children }) {
     const unsub = onAuthStateChanged(auth, async (u) => {
       setUser(u)
       if (u) {
-        // Check if user has a room
-        const userDoc = await getDoc(doc(db, 'users', u.uid))
-        if (userDoc.exists() && userDoc.data().roomId) {
-          setRoomId(userDoc.data().roomId)
-          setNeedsRoom(false)
-        } else {
+        try {
+          const userDoc = await getDoc(doc(db, 'users', u.uid))
+          if (userDoc.exists() && userDoc.data().roomId) {
+            setRoomId(userDoc.data().roomId)
+            setNeedsRoom(false)
+          } else {
+            setRoomId(null)
+            setNeedsRoom(true)
+          }
+        } catch (err) {
+          console.error('Failed to check room:', err)
+          setRoomId(null)
           setNeedsRoom(true)
         }
       } else {
