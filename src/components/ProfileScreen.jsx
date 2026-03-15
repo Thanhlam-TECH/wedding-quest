@@ -1,6 +1,7 @@
-import { useState, useRef } from 'react'
+import { useState } from 'react'
 import { useGame } from '../context/GameContext'
-import { Crown, Sparkles, Trophy, Heart, Calendar, Target, Shield, X, LogOut } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
+import { Crown, Sparkles, Trophy, Heart, Calendar, Target, Shield, X, LogOut, Copy, Check } from 'lucide-react'
 
 function formatCurrency(num) {
   if (!num) return '—'
@@ -19,8 +20,18 @@ export default function ProfileScreen({ onLogout }) {
     daysUntilWedding,
   } = useGame()
 
+  const { roomId } = useAuth()
   const [editingName, setEditingName] = useState(null)
   const [nameInput, setNameInput] = useState('')
+  const [copied, setCopied] = useState(false)
+
+  const copyRoomCode = () => {
+    if (roomId) {
+      navigator.clipboard.writeText(roomId)
+      setCopied(true)
+      setTimeout(() => setCopied(false), 2000)
+    }
+  }
 
   const handleNameSave = (role) => {
     dispatch({
@@ -177,6 +188,30 @@ export default function ProfileScreen({ onLogout }) {
             <div className="text-[10px] text-slate-500">Ngày còn lại</div>
           </div>
         </div>
+
+        {/* Room Code */}
+        {roomId && (
+          <div className="bg-gradient-to-r from-royal-900/40 to-gold-900/20 rounded-xl p-4 mb-4 border border-royal-700/20">
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-[10px] text-slate-400 mb-1">Mã phòng</div>
+                <div className="text-lg font-mono font-bold text-gold-300 tracking-widest">
+                  {roomId}
+                </div>
+                <div className="text-[10px] text-slate-500 mt-1">
+                  Gửi mã này cho người yêu để tham gia
+                </div>
+              </div>
+              <button
+                onClick={copyRoomCode}
+                className="flex items-center gap-1.5 px-3 py-2 bg-royal-600/30 border border-royal-500/30 rounded-lg text-xs text-royal-300 hover:bg-royal-600/50 transition-colors"
+              >
+                {copied ? <Check size={12} /> : <Copy size={12} />}
+                {copied ? 'Đã copy!' : 'Copy'}
+              </button>
+            </div>
+          </div>
+        )}
 
         {/* Badges */}
         <div className="mb-4">
