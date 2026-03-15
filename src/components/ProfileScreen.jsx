@@ -1,13 +1,13 @@
 import { useState, useRef } from 'react'
 import { useGame } from '../context/GameContext'
-import { Crown, Sparkles, Trophy, Heart, Calendar, Target, Shield, X } from 'lucide-react'
+import { Crown, Sparkles, Trophy, Heart, Calendar, Target, Shield, X, LogOut } from 'lucide-react'
 
 function formatCurrency(num) {
   if (!num) return '—'
   return new Intl.NumberFormat('vi-VN').format(num) + 'đ'
 }
 
-export default function ProfileScreen() {
+export default function ProfileScreen({ onLogout }) {
   const {
     profiles,
     dispatch,
@@ -205,6 +205,18 @@ export default function ProfileScreen() {
 
         {/* Reset */}
         <ResetConfirm profiles={profiles} onConfirm={() => dispatch({ type: 'RESET_ALL' })} />
+
+        {/* Logout */}
+        {onLogout && (
+          <div className="mb-8 text-center">
+            <button
+              onClick={onLogout}
+              className="text-xs text-slate-500 hover:text-slate-300 flex items-center gap-1.5 mx-auto"
+            >
+              <LogOut size={12} /> Đăng xuất
+            </button>
+          </div>
+        )}
       </div>
     </div>
   )
